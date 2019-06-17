@@ -1,0 +1,25 @@
+Name of Quantlet:  SoNIC_simulation_study   
+
+Published in: SoNIC
+
+Description: 'simulation study for SoNIC model with N=T=100, s=1, K=2..30'
+
+Keywords:
+- social network
+- network autoregression
+- clustering
+- communities
+- influencer
+- central node
+- sentiment analysis
+- stocktwits
+- adjacency matrix
+- lasso
+- greedy algorithm
+
+See also: 
+- SoNIC_AAPL_BTC
+
+Author: Yegor Klochkov
+
+Submitted: Mon, Jun 17 2019 by Yegor Klochkov
