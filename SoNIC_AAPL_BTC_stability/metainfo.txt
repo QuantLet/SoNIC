@@ -1,0 +1,27 @@
+Name of Quantlet:  SoNIC_AAPL_BTC   
+
+Published in: SoNIC
+
+Description: 'estimation of SoNIC model on AAPL and BTC sentiment weights'
+
+Keywords:
+- social network
+- network autoregression
+- clustering
+- communities
+- influencer
+- central node
+- sentiment analysis
+- stocktwits
+- adjacency matrix
+- lasso
+- greedy algorithm
+- Apple
+- Bitcoin
+
+See also: 
+- SoNIC_simulation_study
+
+Author: Yegor Klochkov
+
+Submitted: Mon, Jun 17 2019 by Yegor Klochkov
