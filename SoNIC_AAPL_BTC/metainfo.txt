@@ -21,6 +21,7 @@ Keywords:
 
 See also: 
 - SoNIC_simulation_study
+- SoNIC_AAPL_BTC_stability
 
 Author: Yegor Klochkov
 

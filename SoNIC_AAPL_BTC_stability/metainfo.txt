@@ -2,7 +2,7 @@ Name of Quantlet:  SoNIC_AAPL_BTC
 
 Published in: SoNIC
 
-Description: 'estimation of SoNIC model on AAPL and BTC sentiment weights'
+Description: 'stability analysis and choice of the number of clustering of SoNIC model on AAPL and BTC sentiment weights'
 
 Keywords:
 - social network
@@ -21,6 +21,7 @@ Keywords:
 
 See also: 
 - SoNIC_simulation_study
+- SoNIC_AAPL_BTC
 
 Author: Yegor Klochkov
 
