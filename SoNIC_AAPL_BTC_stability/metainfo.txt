@@ -1,4 +1,4 @@
-Name of Quantlet:  SoNIC_AAPL_BTC   
+Name of Quantlet:  SoNIC_AAPL_BTC_stability   
 
 Published in: SoNIC
 

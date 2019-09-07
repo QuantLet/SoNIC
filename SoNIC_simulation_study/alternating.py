@@ -8,7 +8,7 @@ import math
 from sklearn import linear_model
 
 #import read_data
-#import missing
+import missing
 import kmeans_greedy
 
 
@@ -152,8 +152,8 @@ def z_step(cluster_num, D1, v, ind_old=None):
     mat = np.matmul(v, D1)
 
     #check this stupid function!!! <- apparently works...
-    res = kmeans_greedy.kmeans_greedy(lambda a: np.matrix.trace(a),
-                                      cluster_num, mat, init_index=ind_old)
+    res = kmeans_greedy.kmeans_greedy(lambda ind: np.matrix.trace(np.matmul(mat, get_index_matrix(cluster_num, ind))),
+                                      cluster_num, n, init_index=ind_old)
     ind_mat = get_index_matrix(cluster_num, res.index)
 
     return ind_mat, res.index,  .0
@@ -179,8 +179,10 @@ def alternating(cluster_num, D0, D1, alpha_v, epochs=10, index_init=None):
     assert (np.shape(D1) == (n, n))
 
     if index_init is None:
-        res = kmeans_greedy.kmeans_greedy(lambda a: np.linalg.norm(a, ord='nuc'),
-                                          cluster_num, np.matmul(random_basis(n, cluster_num).T, D1))
+        mat = np.matmul(random_basis(n, cluster_num).T, D1)
+        res = kmeans_greedy.kmeans_greedy(lambda ind: np.linalg.norm(
+                                                np.matmul(mat, get_index_matrix(cluster_num, ind)), ord='nuc'
+                                            ), cluster_num, n)
         ind_start = res.index
     else:
         ind_start = index_init
@@ -188,7 +190,7 @@ def alternating(cluster_num, D0, D1, alpha_v, epochs=10, index_init=None):
     for e in range(epochs):
         if e == 0:
             ind_est = ind_start
-            z_est = kmeans_greedy.get_index_matrix(cluster_num, ind_start)
+            z_est = get_index_matrix(cluster_num, ind_start)
         else:
             z_est, ind_est, _ = z_step(cluster_num, D1, v_est, ind_old=ind_est)
         v_est, loss = v_step(D0, D1, alpha_v, z_est)
@@ -317,7 +319,7 @@ def matrix_competition(type, repeat_num,  *args, **kwargs):
     return ress[idx]
 
 
-def simu(n, c_num, s, T):
+def simu(n, c_num, s, T, pmin=1.0):
     # define true index
     c_size = int(n // c_num)
     r = n - c_num * c_size
@@ -340,13 +342,21 @@ def simu(n, c_num, s, T):
 
     #generate the time series
     x = gauss_var1_process(theta_star, 1., T)
-    x_train = x[:, :-1]
-    y_train = x[:, 1:]
 
-    D0 = np.matmul(x_train, x_train.T) / (T-1)
-    D1 = np.matmul(x_train, y_train.T) / (T-1)
+    #missing observations
+    mask = np.random.binomial(1, pmin, size=(n, T)).astype(np.float64)
+    x_missing = x * mask
 
-    alphas = np.logspace(-1, .7, num=10, base=10) * math.sqrt(math.log(n) * c_num * s / T)
+    x_train = x_missing[:, :-1]
+    y_train = x_missing[:, 1:]
+    
+    deltas = np.mean(mask, axis = 1)
+
+    #D0 = np.matmul(x_train, x_train.T) / (T-1)
+    #D1 = np.matmul(x_train, y_train.T) / (T-1)
+    D0 = missing.
+
+    alphas = np.logspace(-1, 1, num=10, base=10) * math.sqrt(math.log(n) / (T * pmin **2))
     # alphas = np.array([1.]) * math.sqrt(math.log(n) * c_num * s / T)
     node_infls = []
     cl_diffs = []
@@ -354,7 +364,7 @@ def simu(n, c_num, s, T):
     # ind_prev = None
     ind_prev = ind_star
     for i, alpha_v in enumerate(alphas):
-        res = matrix_competition('ALTER_FROM_DATA', 1, c_num, x_train, y_train, alpha_v, index_init=ind_prev)
+        res = matrix_competition('ALTER', 50, c_num, D0, D1, alpha_v, index_init=ind_prev, epochs=50)
         theta_est, u_est, v_est, loss = res.theta, res.u, res.v, res.loss
 
         cl_diffs.append(index_dist(c_num, res.index, ind_star))
