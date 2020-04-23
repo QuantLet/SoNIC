@@ -1,34 +1,41 @@
 import subprocess
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+from math import sqrt, log
 
 if __name__ == '__main__':
-    cl_nums = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30]
-    pmin = "0.5"
+    #cl_nums = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30]
+    cl_nums = [5]
+    pmin = 0.5
+    n = 20
+    T = 400
     tasks = [
-        ["python", "simusimu.py", '100', str(cl_num), '1', '200', pmin] for cl_num in cl_nums
+        ["python", "simusimu.py", str(n), str(cl_num), '1', str(T), str(pmin)] for cl_num in cl_nums
     ]
-    procs = [subprocess.Popen(task) for task in tasks]
-    for i, proc in enumerate(procs):
-        out, err = proc.communicate()
-        if err is not None:
-            print("ERROR for TASK {}".format(" ".join(tasks[i])))
-            print(err)
+    if True:
+        procs = [subprocess.Popen(task) for task in tasks]
+        for i, proc in enumerate(procs):
+            out, err = proc.communicate()
+            if err is not None:
+                print("ERROR for TASK {}".format(" ".join(tasks[i])))
+                print(err)
 
     data = []
     for cl_num in cl_nums:
-        data.append(pd.read_csv("simu_n100k{}s1T200.csv".format(cl_num)))
+        data.append(pd.read_csv("simu_n{}k{}s1T{}.csv".format(n, cl_num, T)))
 
         ############################
         #
         # lambda graphs
         #
         #
-    if False:
+    if True:
         for i, cl_num in enumerate(cl_nums):
-            plt.plot(data[i]['alpha'] / sqrt(log(cl_num) / 200), np.array(data[i]['theta_diff']),label=str(cl_num))
+            plt.plot(data[i]['alpha'] / sqrt(log(n) / (T * (float(pmin) **2)))
+                     ,np.minimum(np.array(data[i]['theta_diff']), 5), label=str(cl_num), marker='o')
         plt.savefig('alpha_loss.png', dpi=1000)
-        #plt.show()
+        plt.show()
         plt.clf()
 
     ############################

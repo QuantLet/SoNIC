@@ -1,12 +1,12 @@
-import read_data
-import missing
+import common.read_data as read_data
+import common.missing as missing
 from pandas import read_csv, DataFrame
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn import cluster
 
-from alternating import matrix_competition, index_dist
+from common.alternating import matrix_competition, index_dist
 
 
 def generate_random_weights(num):
@@ -27,8 +27,8 @@ def generate_random_weights(num):
 
 if __name__ == '__main__':
     tasks = [
-        ('data/users_daily_timeseries_AAPL.csv', "results/adapt_AAPL", ),
-        ('data/users_BTC_timeseries_Daily.csv', "results/adapt_BTC"),
+        ('../data/users_daily_timeseries_AAPL.csv', "adapt_AAPL")
+        , ('../data/users_BTC_timeseries_Daily.csv', "adapt_BTC")
     ]
 
     for (data_path, save_path) in tasks:
@@ -36,7 +36,6 @@ if __name__ == '__main__':
 
         Y, deltas, names = read_data.read_stock_twits_user_sentiment(data_path, min_days=80, min_delta=.5)
         N, tmax = np.shape(Y)
-        print(N, tmax)
 
         SIM_NUM = 6
         win_len = (3 * tmax) // 4
@@ -56,8 +55,8 @@ if __name__ == '__main__':
                 D0 = missing.missing_var(x_train, deltas)
                 D1 = missing.missing_covar(x_train, y_train, deltas, deltas)
 
-                lmbd = (np.linalg.eigvalsh(D0)[-2]) * np.sqrt(np.log(N)) / np.sqrt(tmax * np.min(deltas) ** 2)
-                ress.append(matrix_competition("ALTER", 1, c_num, D0, D1, lmbd, epochs=10))
+                lmbd = (np.linalg.eigvalsh(D0)[-(c_num + 1)]) * np.sqrt(np.log(N)) / np.sqrt(tmax * np.min(deltas) ** 2)
+                ress.append(matrix_competition("ALTER", 5, c_num, D0, D1, lmbd, epochs=50))
 
             ans_idx.append([index_dist(c_num, ress[0].index, ress[j].index) for j in range(1, SIM_NUM)])
             ans_theta.append([np.linalg.norm(ress[0].theta - ress[j].theta) for j in range(1, SIM_NUM)])
@@ -68,6 +67,9 @@ if __name__ == '__main__':
             plt.plot([c_num] * (SIM_NUM - 1), ans_idx[i], 'o', color='b')
         plt.savefig(save_path + ".png", dpi=500)
         plt.savefig(save_path + ".jpg", dpi=100, optimize=True, quality=30)
+        plt.clf()
+
+
 
 
 
