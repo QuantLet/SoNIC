@@ -8,8 +8,8 @@ import math
 from sklearn import linear_model
 
 #import read_data
-import missing
-import kmeans_greedy
+import common.missing as missing
+import common.kmeans_greedy as kmeans_greedy
 
 
 options['show_progress'] = False
@@ -343,28 +343,26 @@ def simu(n, c_num, s, T, pmin=1.0):
     #generate the time series
     x = gauss_var1_process(theta_star, 1., T)
 
-    #missing observations
+    #include missing observations
     mask = np.random.binomial(1, pmin, size=(n, T)).astype(np.float64)
     x_missing = x * mask
 
     x_train = x_missing[:, :-1]
     y_train = x_missing[:, 1:]
-    
-    deltas = np.mean(mask, axis = 1)
 
-    #D0 = np.matmul(x_train, x_train.T) / (T-1)
-    #D1 = np.matmul(x_train, y_train.T) / (T-1)
-    D0 = missing.
+    deltas = np.mean(mask, axis=1)
 
-    alphas = np.logspace(-1, 1, num=10, base=10) * math.sqrt(math.log(n) / (T * pmin **2))
-    # alphas = np.array([1.]) * math.sqrt(math.log(n) * c_num * s / T)
+    D0 = missing.missing_var(x_train, deltas)
+    D1 = missing.missing_covar(x_train, y_train, deltas, deltas)
+
+    alphas = np.logspace(-3, 0, num=10, base=2) * 3 * math.sqrt(math.log(n) / (T * (pmin ** 2)))
+
     node_infls = []
     cl_diffs = []
     theta_diffs = []
-    # ind_prev = None
     ind_prev = ind_star
     for i, alpha_v in enumerate(alphas):
-        res = matrix_competition('ALTER', 50, c_num, D0, D1, alpha_v, index_init=ind_prev, epochs=50)
+        res = matrix_competition('ALTER', 1, c_num, D0, D1, alpha_v, index_init=ind_star, epochs=20)
         theta_est, u_est, v_est, loss = res.theta, res.u, res.v, res.loss
 
         cl_diffs.append(index_dist(c_num, res.index, ind_star))

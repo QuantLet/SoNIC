@@ -1,8 +1,6 @@
-import alternating
+import common.alternating as alternating
 import numpy as np
 import sys
-import matplotlib.pyplot as plt
-import seaborn as sns
 from pandas import DataFrame
 
 
@@ -29,19 +27,6 @@ if __name__ == '__main__':
         print("N={}: {}/{} done".format(n, i+1, SIM_NUM))
     theta_diffs_mean = np.mean(np.array(theta_diffss), axis=0)
     cl_diffs_mean = np.mean(np.array(cl_diffss), axis=0)
-
-    if False:
-        plt.plot(alphas, cl_diffs_mean)
-        plt.show()
-
-        plt.plot(alphas, theta_diffs_mean)
-        plt.show()
-
-        sns.set()
-        ax = sns.heatmap(node_infls, center=0, yticklabels=np.round(alphas, decimals=2))
-        # ax.set_xticklabels(ax.get_xticklabels(), rotation=-90, fontsize=8)
-        ax.set_yticklabels(ax.get_yticklabels(), rotation=0, fontsize=8)
-        plt.show()
 
     value = np.empty((np.size(alphas), n + 3))
     value[:, 0] = alphas
