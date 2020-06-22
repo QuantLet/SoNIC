@@ -2,7 +2,7 @@ Name of Quantlet:  SoNIC_simulation_study
 
 Published in: SoNIC
 
-Description: 'simulation study for SoNIC model with N=T=100, s=1, K=2..30'
+Description: 'simulation study for SoNIC model with parameters N=T=100, s=1, K=2..30'
 
 Keywords:
 - social network
